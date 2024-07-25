@@ -1,0 +1,58 @@
+.root {
+  display: flex;
+  flex-direction: column;
+}
+
+.footer {
+  position: relative;
+
+  margin: 12px 6px 0;
+  padding-top: 6px;
+
+  border-top: 2px solid #141414;
+
+  transition: border-top-color 200ms;
+
+  &.no-icon {
+    .footer-inner {
+      padding: 0 6px;
+    }
+  }
+
+  &.warning {
+    color: var(--cc-color-pink);
+    border-top-color: var(--cc-color-pink);
+
+    .footer-icon,
+    .footer-text {
+      opacity: 1;
+    }
+  }
+
+  &::before {
+    position: absolute;
+  }
+}
+
+.footer-inner {
+  display: flex;
+  column-gap: 4px;
+  padding: 0 4px;
+}
+
+.footer-text,
+.footer-icon {
+  opacity: 0.35;
+}
+
+.footer-text {
+  font-size: 10px;
+  line-height: 12px;
+  font-weight: 500;
+}
+
+.footer-icon {
+  width: 12px;
+  min-width: 12px;
+  height: 12px;
+}

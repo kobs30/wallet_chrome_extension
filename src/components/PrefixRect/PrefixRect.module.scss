@@ -1,0 +1,47 @@
+.root {
+  --background-color: #141414;
+  width: 36px;
+  height: 36px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--background-color);
+  border-radius: 8px;
+
+  &.active {
+    .state {
+      background-image: linear-gradient(
+        225deg,
+        var(--cc-color-gradient-a),
+        var(--cc-color-gradient-b) 49%,
+        var(--cc-color-gradient-c)
+      );
+    }
+  }
+
+  &.no-active {
+    .state {
+      display: none;
+    }
+  }
+
+  &.clickable {
+    cursor: pointer;
+  }
+}
+
+.state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  border-radius: 2px;
+  width: 12px;
+  height: 12px;
+  color: var(--cc-color-text-inverse);
+  background-color: #141414;
+  box-shadow: 0 0 0 1px var(--cc-color-background);
+}

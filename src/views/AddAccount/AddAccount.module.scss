@@ -1,0 +1,17 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  row-gap: 24px;
+}
+
+.image {
+  align-self: center;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+}

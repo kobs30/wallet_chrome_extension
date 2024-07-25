@@ -1,0 +1,71 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  row-gap: 18px;
+  height: 100%;
+}
+
+.title {
+  text-align: center;
+  font-size: 14px;
+  line-height: 24px;
+  font-weight: 700;
+}
+
+.description {
+  text-align: center;
+  font-size: 10px;
+  line-height: 16px;
+  font-weight: 500;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: column;
+  row-gap: 12px;
+  padding: 0 14px;
+}
+
+.gradient-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  row-gap: 8px;
+  padding: 12px 0;
+}
+
+.gradient-button-title {
+  font-size: 13px;
+  line-height: 20px;
+  font-weight: 700;
+}
+
+.gradient-button-description {
+  font-weight: 500;
+  font-size: 10px;
+  line-height: 12px;
+  opacity: 0.35;
+}
+
+.symbol {
+  display: flex;
+  position: relative;
+}
+
+.chrome {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 13px;
+  height: 13px;
+  border-radius: 2px;
+  background-color: #141414;
+}
+
+.footer {
+  margin-top: auto;
+}

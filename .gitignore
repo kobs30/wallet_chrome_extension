@@ -1,0 +1,21 @@
+# Editors
+.idea
+.vscode
+*.swp
+
+# Other
+.DS_Store
+
+# yarn
+yarn-error.log
+
+node_modules/
+
+# Tests
+
+coverage/
+
+# Misc
+ext/
+build/
+dist/

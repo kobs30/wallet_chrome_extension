@@ -1,0 +1,8 @@
+.root {
+  transition: opacity 200ms;
+  &.active {
+    user-select: none;
+    pointer-events: none;
+    opacity: 0.2;
+  }
+}

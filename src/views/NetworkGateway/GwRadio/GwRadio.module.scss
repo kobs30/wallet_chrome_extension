@@ -1,0 +1,40 @@
+.root {
+  position: relative;
+  display: flex;
+  align-items: center;
+  column-gap: 6px;
+  padding: 8px 16px 8px 10px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #141414;
+
+    .prefix {
+      --background-color: var(--cc-color-background);
+    }
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 8px;
+    left: 10px;
+    height: 1px;
+    opacity: 0.48;
+    background-color: #282828;
+    pointer-events: none;
+  }
+}
+
+.title {
+  font-size: 13px;
+  line-height: 20px;
+  font-weight: 700;
+}
+
+.description {
+  font-size: 10px;
+  line-height: 12px;
+  font-weight: 500;
+}

@@ -1,0 +1,15 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.accounts-list {
+  flex: 1;
+  overflow-y: auto;
+  &::-webkit-scrollbar {
+    width: 0;
+    scrollbar-width: none;
+  }
+}

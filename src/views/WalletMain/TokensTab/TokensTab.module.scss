@@ -1,0 +1,18 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.input {
+  padding: 0 8px;
+}
+
+.tokens {
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 0;
+    scrollbar-width: none;
+  }
+}

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cyclone Wallet Interaction Test</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      button {
+        margin: 10px 0;
+        padding: 10px;
+        font-size: 16px;
+      }
+      #result {
+        margin-top: 20px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        background-color: #f0f0f0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Cyclone Wallet Interaction Test</h1>
+
+    <button id="checkExtension">Check Extension</button>
+    <button id="getAddress">Get Wallet Address</button>
+    <button id="signAndSend">Sign and Send Message</button>
+    <!-- <input type="text" id="m" value="message is here"> -->
+
+    <div id="result"></div>
+
+    <script>
+      const resultDiv = document.getElementById('result');
+
+      function waitForCycloneWallet(callback) {
+        console.log(window.cycloneWallet);
+        if (window.cycloneWallet) {
+          callback();
+        } else {
+          setTimeout(() => waitForCycloneWallet(callback), 100);
+        }
+      }
+
+      waitForCycloneWallet(() => {
+        console.log('Cyclone Wallet API detected');
+
+        document.getElementById('checkExtension').addEventListener('click', function () {
+          if (window.cycloneWallet) {
+            resultDiv.textContent = 'Cyclone Wallet extension is installed.';
+          } else {
+            resultDiv.textContent = 'Cyclone Wallet extension is not installed.';
+          }
+        });
+
+        document.getElementById('getAddress').addEventListener('click', async function () {
+          if (window.cycloneWallet) {
+            try {
+              const param = 'testParam';
+              const address = await window.cycloneWallet.getWalletAddress(param);
+              resultDiv.textContent = `Wallet address: ${address} (Param used: ${param})`;
+            } catch (error) {
+              resultDiv.textContent = `Error getting wallet address: ${error.message}`;
+            }
+          } else {
+            resultDiv.textContent = 'Cyclone Wallet extension is not installed.';
+          }
+        });
+
+        document.getElementById('signAndSend').addEventListener('click', async function () {
+          if (window.cycloneWallet) {
+            try {
+              const mes = 'HURAAAAAA  Hello, Cyclone Wallet!';
+              const result = await window.cycloneWallet.signAndSendMessage(mes);
+              resultDiv.textContent = `Signed and sent message: ${result}`;
+            } catch (error) {
+              resultDiv.textContent = `Error signing and sending message: ${error.message}`;
+            }
+          } else {
+            resultDiv.textContent = 'Cyclone Wallet extension is not installed.';
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

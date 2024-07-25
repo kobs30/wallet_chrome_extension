@@ -1,0 +1,38 @@
+.root {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  row-gap: 3px;
+  align-items: center;
+
+  &.name-dropdown-opened {
+    .name-dropdown-icon {
+      transform: translate(calc(100% + 1px), -50%) rotate(180deg);
+    }
+  }
+
+  //&.link {
+  //  align-items: initial;
+  //  .copy-to-clipboard {
+  //    margin-left: 16px;
+  //  }
+  //}
+}
+
+.name-dropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+}
+
+.name-dropdown-icon {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translate(calc(100% + 1px), -50%);
+}
+
+.copy-to-clipboard {
+  width: max-content;
+}

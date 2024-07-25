@@ -1,0 +1,12 @@
+.root {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: rotate linear 500ms infinite;
+
+  @keyframes rotate {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}

@@ -1,0 +1,93 @@
+.root {
+  display: flex;
+  flex-direction: column;
+
+  :global(.rc-tabs-content-holder) {
+    flex: 1;
+  }
+
+  :global(.rc-tabs-nav-operations),
+  :global(.rc-tabs-nav-more) {
+    display: none;
+  }
+
+  :global(.rc-tabs-nav) {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin: 0 8px;
+  }
+
+  :global(.rc-tabs-nav-wrap) {
+    position: relative;
+    display: flex;
+    flex: 1;
+    align-self: stretch;
+    overflow: hidden;
+    white-space: nowrap;
+    transform: translate(0);
+  }
+
+  :global(.rc-tabs-nav-list) {
+    position: relative;
+    display: flex;
+    flex: 1;
+  }
+
+  :global(.rc-tabs-tab-btn) {
+    outline: none;
+  }
+
+  :global(.rc-tabs-tab) {
+    display: flex;
+    justify-content: center;
+    flex: 1;
+    padding: 4px;
+
+    font-size: 10px;
+    line-height: 16px;
+    font-weight: 500;
+
+    user-select: none;
+
+    color: var(--fui-color-text-secondary);
+    transition: color 200ms;
+    cursor: pointer;
+
+    &:global(.rc-tabs-tab-active) {
+      background-color: #141414;
+      border-radius: 4px 4px 0 0;
+    }
+
+    &:global(.rc-tabs-tab-disabled) {
+      :global(.rc-tabs-tab-btn) {
+        opacity: 0.2;
+      }
+      cursor: default;
+    }
+  }
+
+  :global(.rc-tabs-tabpane) {
+    display: none;
+    outline: none;
+
+    &:global(.rc-tabs-tabpane-active) {
+      display: block;
+    }
+  }
+
+  :global(.rc-tabs-nav-operations) {
+    display: flex;
+    align-self: stretch;
+
+    &:global(.rc-tabs-nav-operations-hidden) {
+      position: absolute;
+      visibility: hidden;
+      pointer-events: none;
+    }
+  }
+
+  :global(.rc-tabs-ink-bar) {
+    display: none;
+  }
+}

@@ -1,0 +1,51 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.or-separator {
+  text-align: center;
+  margin-top: 13px;
+  margin-bottom: 16px;
+  font-weight: 700;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+}
+
+.gradient-button {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  column-gap: 16px;
+  padding: 22px 0;
+}
+
+.gradient-button-icon {
+  position: absolute;
+  left: -48px;
+}
+
+.gradient-button-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.gradient-button-title {
+  font-size: 12px;
+  line-height: 20px;
+  font-weight: 700;
+}
+
+.gradient-button-description {
+  font-size: 10px;
+  line-height: 12px;
+  font-weight: 500;
+  opacity: 0.35;
+}

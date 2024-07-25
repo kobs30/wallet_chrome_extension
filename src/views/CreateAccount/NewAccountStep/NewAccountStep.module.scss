@@ -1,0 +1,13 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  margin-top: 33px;
+  flex: 1;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  row-gap: 16px;
+  flex: 1;
+}

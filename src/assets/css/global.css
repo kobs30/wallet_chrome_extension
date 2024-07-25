@@ -1,0 +1,40 @@
+@import 'font-face.css';
+@import 'theme.css';
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  --plugin-width: 360px;
+  --plugin-height: 600px;
+
+  background-color: #f5f5f5;
+
+  width: var(--plugin-width);
+  height: var(--plugin-height);
+  overflow: hidden; /* For inputs with textAfterCaret prop */
+
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  height: 100%;
+  color: var(--cc-color-text);
+  background-color: var(--cc-color-background);
+
+  font-family: var(--cc-font-family);
+  font-size: 14px;
+  line-height: 24px;
+}
+
+#root {
+  height: 100%;
+}
+
+a {
+  color: unset;
+  text-decoration: none;
+}

@@ -1,0 +1,56 @@
+.overlay {
+  max-width: 360px;
+  max-height: 600px;
+  z-index: 10;
+}
+
+.background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--cc-color-background);
+  opacity: 0.8;
+}
+
+.dialog {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  right: 12px;
+  transform: translateY(-50%);
+  background-color: #141414;
+  border-radius: 16px;
+  overflow: hidden;
+  outline: none;
+}
+
+.heading {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px;
+}
+
+.title {
+  font-weight: 700;
+}
+
+.close-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  width: 18px;
+  height: 18px;
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%);
+  color: var(--cc-color-text);
+}

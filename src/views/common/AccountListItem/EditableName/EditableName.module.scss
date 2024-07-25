@@ -1,0 +1,39 @@
+.root {
+  display: flex;
+  align-items: center;
+  column-gap: 2px;
+  font-size: 13px;
+  line-height: 20px;
+  font-weight: 700;
+  position: relative;
+
+  &:hover {
+    .icon {
+      visibility: visible;
+    }
+  }
+}
+
+.icon {
+  opacity: 0.84;
+  cursor: pointer;
+  visibility: hidden;
+}
+
+.edit-form {
+  display: flex;
+  flex: 1;
+}
+
+.edit-input {
+  font-size: 13px;
+  line-height: 20px;
+  font-weight: 700;
+  font-family: var(--cc-font-family);
+  outline: none;
+  border: none;
+  background-color: transparent;
+  color: var(--cc-color-text);
+  height: 20px;
+  width: 100%;
+}

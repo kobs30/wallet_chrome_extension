@@ -1,0 +1,17 @@
+.root {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: inherit;
+  margin-top: 12px;
+}
+
+.account-info {
+  padding: 2px 0;
+}
+
+.snackbar {
+  position: absolute;
+  right: 8px;
+  left: 8px;
+}

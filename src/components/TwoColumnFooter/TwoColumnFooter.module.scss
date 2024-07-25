@@ -1,0 +1,31 @@
+.root {
+  padding: 0 4px 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.column {
+  display: flex;
+  column-gap: 4px;
+  font-size: 10px;
+  line-height: 12px;
+  font-weight: 500;
+  padding: 6px;
+  transition: opacity 200ms;
+
+  &.disabled {
+    opacity: 0.2;
+  }
+
+  &.clickable:not(.disabled) {
+    cursor: pointer;
+    &:hover {
+      opacity: 0.5;
+    }
+  }
+
+  &.right {
+    flex-direction: row-reverse;
+  }
+}

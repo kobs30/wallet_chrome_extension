@@ -1,0 +1,49 @@
+@import 'variables';
+
+@mixin input($small: false) {
+  box-sizing: border-box;
+
+  width: 100%;
+  height: 48px;
+
+  border: 0.5px solid rgba(255 255 255 / 0.1);
+  border-radius: 6px;
+
+  background-color: #141414;
+
+  transition: border-color $transition-duration;
+
+  @if $small {
+    height: 32px;
+  }
+}
+
+@mixin input-html {
+  color: var(--cc-color-text);
+  caret-color: var(--cc-color-pink);
+  background-color: transparent;
+  width: 100%;
+
+  border: none;
+  outline: none;
+  -moz-appearance: textfield;
+
+  font-family: var(--cc-font-family);
+  font-size: 14px;
+  line-height: 24px;
+  letter-spacing: -0.14px;
+
+  padding-left: 16px;
+  padding-right: 16px;
+
+  &::placeholder {
+    opacity: 0.5;
+    font-size: 14px;
+    letter-spacing: -0.14px;
+    font-family: var(--cc-font-family);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}

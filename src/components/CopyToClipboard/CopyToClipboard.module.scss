@@ -1,0 +1,17 @@
+.root {
+  display: flex;
+  align-items: center;
+  column-gap: 2px;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+  opacity: 0.85;
+  transition: opacity 200ms;
+  color: #a76fff;
+
+  &:hover {
+    opacity: 1;
+  }
+}

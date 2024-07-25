@@ -1,0 +1,16 @@
+/* CC - Cyclone abbr */
+:root {
+  --cc-color-background: #000;
+  --cc-color-primary: #7d2bff;
+  --cc-color-pink: #e40ba1;
+  --cc-color-yellow: #f7de33;
+  --cc-color-green: #33f763;
+  --cc-color-text: #fff;
+  --cc-color-text-inverse: #000;
+
+  --cc-color-gradient-a: #32c5ff;
+  --cc-color-gradient-b: #b620e0;
+  --cc-color-gradient-c: #f7b500;
+
+  --cc-font-family: 'Manrope', sans-serif;
+}

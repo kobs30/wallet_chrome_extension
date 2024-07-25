@@ -1,0 +1,261 @@
+@import '../mixins';
+@import '../variables';
+
+@mixin input-html-wrapped($small: false, $password: false) {
+  @include input-html;
+
+  @if $small {
+    padding-left: 8px;
+    font-size: 12px;
+
+    &::placeholder {
+      opacity: 0.2;
+      font-size: 12px;
+    }
+  }
+
+  @if $password {
+    font-size: 20px;
+    font-family: 'Password', sans-serif;
+    letter-spacing: 1.5px;
+  }
+}
+
+.root {
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    height: 2px;
+    left: 5px;
+    right: 5px;
+    background-image: linear-gradient(
+      to left,
+      var(--cc-color-gradient-a),
+      var(--cc-color-gradient-b) 49%,
+      var(--cc-color-gradient-c)
+    );
+    opacity: 0;
+    transition: opacity $transition-duration;
+  }
+
+  &.size-small {
+    .rc-input {
+      &:global(.rc-input) {
+        @include input-html-wrapped(true, false);
+        @include input(true);
+      }
+      &:not(&:global(.rc-input)) {
+        @include input(true);
+
+        :global(.rc-input) {
+          @include input-html-wrapped(true, false);
+        }
+
+        :global(.rc-input-prefix) {
+          padding-left: 8px;
+
+          & + :global(.rc-input) {
+            padding-left: 4px;
+          }
+        }
+
+        :global(.rc-input-suffix) {
+          column-gap: 4px;
+          padding-right: 8px;
+        }
+      }
+    }
+
+    &.password {
+      .rc-input {
+        &:global(.rc-input) {
+          @include input-html-wrapped(true, true);
+        }
+        &:not(&:global(.rc-input)) {
+          :global(.rc-input) {
+            @include input-html-wrapped(true, true);
+          }
+        }
+      }
+    }
+
+    .input-button,
+    .input-icon {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  &.size-medium {
+    .rc-input {
+      &:global(.rc-input) {
+        @include input-html-wrapped(false, false);
+        @include input(false);
+      }
+      &:not(&:global(.rc-input)) {
+        @include input(false);
+        :global(.rc-input) {
+          @include input-html-wrapped(false, false);
+        }
+
+        :global(.rc-input-prefix) {
+          padding-left: 12px;
+        }
+
+        :global(.rc-input-suffix) {
+          column-gap: 8px;
+          padding-right: 12px;
+        }
+      }
+    }
+
+    &.password {
+      .rc-input {
+        &:global(.rc-input) {
+          @include input-html-wrapped(false, true);
+        }
+        &:not(&:global(.rc-input)) {
+          :global(.rc-input) {
+            @include input-html-wrapped(false, true);
+          }
+        }
+      }
+    }
+  }
+
+  &.focused {
+    &::before {
+      opacity: 1;
+    }
+
+    .rc-input {
+      &:global(.rc-input) {
+        border-color: rgba(255 255 255 / 0.2);
+      }
+      &:not(&:global(.rc-input)) {
+        border-color: rgba(255 255 255 / 0.2);
+
+        :global(.rc-input-prefix) {
+          opacity: 1;
+        }
+      }
+    }
+  }
+
+  &.with-text-after-caret {
+    .hidden-area {
+      max-width: 160px;
+    }
+    .rc-input {
+      :global(.rc-input) {
+        padding-right: 0 !important;
+        max-width: 160px;
+      }
+
+      &:not(&:global(.rc-input)) {
+        :global(.rc-input-suffix) {
+          margin-left: auto;
+        }
+      }
+    }
+  }
+}
+
+.legend {
+  position: absolute;
+  top: -8px;
+  left: 8px;
+  padding: 2px 4px;
+  border-radius: 12px;
+  background-color: var(--cc-color-background);
+
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 16px;
+
+  text-align: center;
+}
+
+.hidden-area {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  pointer-events: none;
+  height: 24px;
+  padding-left: 16px;
+
+  &-text {
+    user-select: none;
+    visibility: hidden;
+    font-size: 14px;
+    letter-spacing: -0.14px;
+  }
+}
+
+.text-after-caret {
+  position: absolute;
+  top: 50%;
+  right: -6px;
+
+  transform: translate(100%, -50%);
+
+  font-size: 10px;
+  line-height: 16px;
+  font-weight: 500;
+
+  opacity: 0.5;
+  white-space: nowrap;
+}
+
+.input-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  opacity: 0.5;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.input-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.rc-input {
+  &:not(&:global(.rc-input)) {
+    display: inline-flex;
+
+    &:global(.rc-input-affix-wrapper-disabled) {
+      cursor: not-allowed;
+    }
+
+    :global(.rc-input-prefix) {
+      opacity: 0.5;
+      transition: opacity $transition-duration;
+    }
+
+    :global(.rc-input-suffix),
+    :global(.rc-input-prefix) {
+      display: flex;
+      align-items: center;
+      flex: none;
+    }
+
+    :global(.rc-input-clear-icon) {
+      display: flex;
+      cursor: pointer;
+      &:global(.rc-input-clear-icon-hidden) {
+        display: none;
+      }
+    }
+  }
+}

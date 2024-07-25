@@ -1,0 +1,102 @@
+.root {
+  &.size-small {
+    .content {
+      padding: 0 12px;
+      font-size: 10px;
+      line-height: 20px;
+      letter-spacing: -0.12px;
+      height: 18px;
+    }
+  }
+
+  &.size-medium {
+    .content {
+      padding: 0 19px;
+      font-size: 16px;
+      line-height: 16px;
+      height: 34px;
+    }
+  }
+
+  &.clickable {
+    cursor: pointer;
+  }
+
+  &.with-delete {
+    .content {
+      padding-right: 16px;
+
+      &::after {
+        content: '';
+        width: 1px;
+        height: 24px;
+        opacity: 0.2;
+        margin-left: 10px;
+        margin-right: 8px;
+        background-color: var(--cc-color-text);
+        order: 2;
+      }
+    }
+  }
+
+  &.with-gradient-border:not(.disabled) .border {
+    background-image: linear-gradient(
+      260deg,
+      var(--cc-color-gradient-a),
+      var(--cc-color-gradient-b) 49%,
+      var(--cc-color-gradient-c)
+    );
+  }
+
+  &.disabled {
+    pointer-events: none;
+    opacity: 0.2;
+
+    .border {
+      box-shadow: inset 0 0 0 0.5px #fff;
+    }
+
+    .border,
+    .content {
+      background-color: var(--cc-color-background);
+    }
+  }
+}
+
+.border {
+  display: flex;
+  background: var(--cc-color-primary);
+  border-radius: 40px;
+  padding: 1px;
+}
+
+.content {
+  display: inline-flex;
+  align-items: center;
+
+  font-weight: 500;
+  user-select: none;
+
+  background-color: var(--cc-color-primary);
+  border-radius: 40px;
+}
+
+.label {
+  order: 1;
+}
+
+.delete-button {
+  order: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  opacity: 0.5;
+  cursor: pointer;
+  outline: none;
+
+  &:hover {
+    opacity: 1;
+  }
+}

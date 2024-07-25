@@ -1,0 +1,124 @@
+@import '../mixins';
+@import '../variables';
+
+.root {
+  position: relative;
+  display: inline-flex;
+  width: 100%;
+  border-radius: 6px;
+  box-sizing: border-box;
+  padding-right: 12px;
+
+  &.no-editable {
+    input {
+    }
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    height: 2px;
+    left: 5px;
+    right: 5px;
+    background-image: linear-gradient(
+      to left,
+      var(--cc-color-gradient-a),
+      var(--cc-color-gradient-b) 49%,
+      var(--cc-color-gradient-c)
+    );
+    transition: opacity $transition-duration;
+    opacity: 0;
+  }
+
+  &.size-small {
+    @include input(true);
+
+    &.with-prefix {
+      :global(.rc-input-number-input) {
+        padding-left: 4px;
+      }
+    }
+
+    &.with-suffix {
+      :global(.rc-input-number-input) {
+        padding-right: 0;
+      }
+    }
+  }
+
+  &.size-medium {
+    @include input;
+
+    &.with-prefix {
+      :global(.rc-input-number-input) {
+        padding-left: 12px;
+      }
+    }
+
+    &.with-suffix {
+      :global(.rc-input-number-input) {
+        padding-right: 0;
+      }
+    }
+  }
+
+  &.focused {
+    border-color: rgba(255 255 255 / 0.2);
+
+    &::before {
+      opacity: 1;
+    }
+  }
+
+  &.disabled {
+    opacity: 0.2;
+  }
+
+  :global(.rc-input-number-input-wrap),
+  :global(.rc-input-number) {
+    width: 100%;
+    display: flex;
+  }
+
+  :global(.rc-input-number-input) {
+    @include input-html;
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+}
+
+.legend {
+  position: absolute;
+  top: -8px;
+  left: 8px;
+  padding: 2px 4px;
+  border-radius: 12px;
+  background-color: var(--cc-color-background);
+
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 16px;
+  text-align: center;
+}
+
+.prefix,
+.suffix {
+  display: flex;
+  align-items: center;
+  flex: none;
+  font-size: var(--font-size-default);
+  color: var(--token-text-secondary);
+}
+
+.prefix {
+  padding-left: 16px;
+}
+
+.suffix {
+  padding-left: 12px;
+}

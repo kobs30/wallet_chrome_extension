@@ -1,0 +1,6 @@
+ext/
+dist/
+src/assets/
+.eslintrc.js
+vite.config.mts
+vite.web.config.mts

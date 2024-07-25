@@ -1,0 +1,137 @@
+@import '../variables';
+
+@mixin textarea() {
+  box-sizing: border-box;
+  resize: none;
+
+  width: 100%;
+  min-height: 36px;
+  max-height: 332px;
+
+  background-color: #141414;
+  color: var(--cc-color-text);
+
+  outline: none;
+
+  font-size: 14px;
+  line-height: 24px;
+  font-family: var(--cc-font-family);
+  letter-spacing: -0.14px;
+
+  padding: 13px 16px;
+  border: 0.5px solid rgba(255 255 255 / 0.1);
+  border-radius: 6px;
+
+  transition: border-color $transition-duration;
+
+  &::placeholder {
+    opacity: 0.5;
+    font-size: 14px;
+    letter-spacing: -0.14px;
+    font-family: var(--cc-font-family);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255 255 255 / 0.5);
+    border: 3px solid var(--cc-color-background);
+    border-radius: 4px;
+  }
+}
+
+.root {
+  display: flex;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    height: 2px;
+    left: 5px;
+    right: 5px;
+    background-image: linear-gradient(
+      to left,
+      var(--cc-color-gradient-a),
+      var(--cc-color-gradient-b) 49%,
+      var(--cc-color-gradient-c)
+    );
+    opacity: 0;
+    transition: opacity $transition-duration;
+  }
+
+  &.focused {
+    &::before {
+      opacity: 1;
+    }
+
+    .textarea:global(.rc-textarea) {
+      border-color: rgba(255 255 255 / 0.2);
+    }
+  }
+}
+
+.textarea {
+  &:not(&:global(.rc-textarea-affix-wrapper)) {
+    @include textarea;
+  }
+
+  &:global(.rc-textarea-affix-wrapper) {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    row-gap: 2px;
+
+    &:global(.rc-textarea-textarea-allow-clear) {
+      :global(.rc-textarea) {
+        padding-right: 40px;
+      }
+    }
+
+    :global(.rc-textarea) {
+      @include textarea;
+    }
+  }
+
+  :global(.rc-textarea-suffix) {
+    display: flex;
+    align-self: flex-end;
+    font-size: 14px;
+    line-height: 24px;
+    color: var(--fui-color-text-secondary);
+  }
+
+  :global(.rc-textarea-clear-icon) {
+    display: flex;
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    cursor: pointer;
+
+    &:global(.rc-textarea-clear-icon-hidden) {
+      display: none;
+    }
+  }
+}
+
+.legend {
+  position: absolute;
+  top: -8px;
+  left: 8px;
+  padding: 2px 4px;
+  border-radius: 12px;
+  background-color: var(--cc-color-background);
+
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 16px;
+
+  text-align: center;
+}
