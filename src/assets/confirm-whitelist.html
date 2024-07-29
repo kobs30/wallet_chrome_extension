@@ -5,12 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Подтверждение доступа</title>
     <style>
-      body {
+      body,
+      html {
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 100vh;
         font-family: Arial, sans-serif;
+        background-color: black;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
       }
       .container {
         text-align: center;
@@ -19,14 +25,25 @@
         margin: 10px;
         padding: 10px 20px;
         font-size: 16px;
+        background-color: #7d2bff;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+      #cancel {
+        background-color: rgb(143, 4, 4);
+      }
+      h1 {
+        color: white;
       }
     </style>
   </head>
   <body>
     <div class="container">
-      <h1>Подтвердите доступ</h1>
-      <button id="confirm">Подтвердить</button>
-      <button id="cancel">Отмена</button>
+      <h1>This page is not yet in the extension's white list. Confirm access</h1>
+      <button id="confirm">Confirm</button>
+      <button id="cancel">Cancel</button>
     </div>
   </body>
   <script src="./confirm-whitelist.js"></script>

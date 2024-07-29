@@ -36,7 +36,7 @@ window.addEventListener('message', async (e) => {
         );
       }
     } catch (error) {
-      console.error('Error getting wallet address:', error);
+      console.log('Error getting wallet address:', error);
     }
   }
 
@@ -55,7 +55,81 @@ window.addEventListener('message', async (e) => {
         );
       }
     } catch (error) {
-      console.error('Error getting native balance:', error);
+      console.log('Error getting native balance:', error);
+    }
+  }
+
+  if (e.data.action === actionsMap.sign && !e.data.response) {
+    try {
+      const response = await chrome.runtime.sendMessage({
+        action: actionsMap.sign,
+        data: e.data.data,
+      });
+      if (response && response.signature) {
+        window.postMessage(
+          {
+            action: actionsMap.sign,
+            signature: response.signature,
+            response: true,
+          },
+          '*'
+        );
+      }
+    } catch (error) {
+      console.log('Error sign:', error);
+    }
+  }
+
+  if (e.data.action === actionsMap.send && !e.data.response) {
+    try {
+      const response = await chrome.runtime.sendMessage({
+        action: actionsMap.send,
+        data: e.data.data,
+      });
+
+      if (response && response.data) {
+        window.postMessage(
+          {
+            action: actionsMap.send,
+            data: response.data,
+            response: true,
+          },
+          '*'
+        );
+      }
+    } catch (error) {
+      console.log('Error send:', error);
+    }
+  }
+
+  if (e.data.action === actionsMap.signAndSend && !e.data.response) {
+    try {
+      const response = await chrome.runtime.sendMessage({
+        action: actionsMap.signAndSend,
+        data: e.data.data,
+      });
+
+      if (response && response.data) {
+        window.postMessage(
+          {
+            action: actionsMap.signAndSend,
+            data: response.data,
+            response: true,
+          },
+          '*'
+        );
+      } else if (response && response.status) {
+        window.postMessage(
+          {
+            action: actionsMap.signAndSend,
+            status: response.status,
+            response: true,
+          },
+          '*'
+        );
+      }
+    } catch (error) {
+      console.log('Error signAndSend:', error);
     }
   }
 });

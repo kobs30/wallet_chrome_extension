@@ -1,5 +1,6 @@
 const urlParams = new URLSearchParams(window.location.search);
-if (urlParams.has('popup')) {
+const urlParamsHref = window.location.href;
+if (urlParams.has('popup') || urlParamsHref.includes('popup=true')) {
   const style = document.createElement('style');
   style.innerHTML = `
         html, body {

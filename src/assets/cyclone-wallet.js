@@ -16,7 +16,6 @@ window.cycloneWallet = {
     if (type === walletTypesMap.extension) {
     }
     if (type === walletTypesMap.web) {
-      // ...
     }
   },
   getWalletAddress: () => {
@@ -41,7 +40,54 @@ window.cycloneWallet = {
       });
     });
   },
-  sign: () => {},
-  send: () => {},
-  signAndSend: () => {},
+  sign: (params) => {
+    return new Promise((resolve, reject) => {
+      window.postMessage({ action: actionsMap.sign, data: params }, '*');
+      window.addEventListener('message', function listener(e) {
+        if (e.data.action === actionsMap.sign && 'signature' in e.data) {
+          window.removeEventListener('message', listener);
+          resolve(e.data.signature);
+        } else if (e.data.action === actionsMap.sign && 'error' in e.data) {
+          window.removeEventListener('message', listener);
+          reject(e.data.error);
+        }
+      });
+    });
+  },
+  send: (params) => {
+    return new Promise((resolve, reject) => {
+      window.postMessage({ action: actionsMap.send, data: params }, '*');
+      window.addEventListener('message', function listener(e) {
+        if (
+          e.data.action === actionsMap.send &&
+          'status' in e.data &&
+          e.data.status === 'success'
+        ) {
+          window.removeEventListener('message', listener);
+          resolve();
+        } else if (e.data.action === actionsMap.send && 'error' in e.data) {
+          window.removeEventListener('message', listener);
+          reject(e.data.error);
+        }
+      });
+    });
+  },
+  signAndSend: (params) => {
+    return new Promise((resolve, reject) => {
+      window.postMessage({ action: actionsMap.signAndSend, data: params }, '*');
+      window.addEventListener('message', function listener(e) {
+        if (
+          e.data.action === actionsMap.signAndSend &&
+          'status' in e.data &&
+          e.data.status === 'success'
+        ) {
+          window.removeEventListener('message', listener);
+          resolve();
+        } else if (e.data.action === actionsMap.signAndSend && 'error' in e.data) {
+          window.removeEventListener('message', listener);
+          reject(e.data.error);
+        }
+      });
+    });
+  },
 };

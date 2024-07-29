@@ -61,19 +61,21 @@ export const Pages = observer(() => {
 
 export const VaultWatcher = observer(() => {
   const rootStore = useRootStore();
-
   useEffect(() => {
     const disposer = autorun(() => {
       const password = rootStore.vault.password;
       const nativeBalance = rootStore.tokens.native;
-      console.log(rootStore);
-
+      const activeAccount = rootStore
+        ? rootStore.wallet.findAccountByAddress(rootStore.wallet.activeAddress)
+        : null;
       try {
         chrome.runtime.sendMessage(
           {
             action: 'VAULT_PASSWORD_CHANGE',
             password,
             nativeBalance,
+            activeAccount,
+            activeAddress: rootStore.wallet.activeAddress,
           },
           (response) => {
             if (chrome.runtime.lastError) {
@@ -91,7 +93,7 @@ export const VaultWatcher = observer(() => {
     return () => {
       disposer();
     };
-  }, [rootStore, rootStore.vault.password, rootStore.tokens.native]);
+  }, [rootStore]);
 
   return null;
 });

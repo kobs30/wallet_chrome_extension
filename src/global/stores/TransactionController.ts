@@ -57,6 +57,8 @@ export class TransactionController {
   };
 
   getSendRequest = async (values: SendValues): Promise<TxSendRequest> => {
+    console.log(values, 'values');
+
     const message = this.#signMessage(values.token, values.to, values.amount, values.signMessage);
     const sendRequest: TxSendRequest = {
       vm: '', // ignore
@@ -76,10 +78,15 @@ export class TransactionController {
       sendRequest.nonce +
       sendRequest.currencyFee;
 
-    const pk = new BitcoinLegacy.ECKey(
-      Array.from(wif.decode(this.rootStore.wallet.activeAccount.pk).privateKey)
-    );
+    const activeAccount = this.rootStore
+      ? this.rootStore.wallet.findAccountByAddress(this.rootStore.wallet.activeAddress)
+      : null;
+    const pk =
+      activeAccount && new BitcoinLegacy.ECKey(Array.from(wif.decode(activeAccount.pk).privateKey));
+    console.log(pk, 'pk');
+
     const sign = signMessageLegacy(pk, signPayload, false);
+
     const verify = verifyMessageLegacy(sign, signPayload);
 
     if (!verify) return Promise.reject();
@@ -105,6 +112,7 @@ export class TransactionController {
     try {
       const sendRequest = await this.getSendRequest(values);
       const { txHash } = await this.rootStore.network.client.send(sendRequest);
+
       return txHash;
       // eslint-disable-next-line no-useless-catch
     } catch (e) {

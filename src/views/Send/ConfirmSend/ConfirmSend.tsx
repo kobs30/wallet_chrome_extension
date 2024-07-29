@@ -59,6 +59,7 @@ export const ConfirmSend = observer((props: Props) => {
         signMessage: values.signMessage,
         feeCurrency: 'native',
       });
+
       rootStore.resetTokens();
       rootStore.transaction.resetWebSend();
       pagesStore.send.setTxHash(txHash);

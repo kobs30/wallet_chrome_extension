@@ -11,6 +11,7 @@ const SEND_LS_KEY = 'send';
 
 export const ConfirmSendPage: FC = () => {
   const navigate = useNavigate();
+
   const handleBack = async () => {
     navigate('/');
     try {
@@ -19,9 +20,11 @@ export const ConfirmSendPage: FC = () => {
       /* empty */
     }
   };
+
   return (
     <PageLayout isHeaderFixed={!IS_PLUGIN} title="Confirm Transaction">
       <div className={styles.root}>
+        <span>12234444</span>
         <ConfirmSend onConfirm={handleBack} onCancel={handleBack} />
       </div>
     </PageLayout>

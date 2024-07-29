@@ -49,6 +49,7 @@ export class NetworkClient {
       req,
       { signal }
     );
+
     return data;
   };
 
