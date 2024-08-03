@@ -47,9 +47,6 @@ window.cycloneWallet = {
         if (e.data.action === actionsMap.sign && 'signature' in e.data) {
           window.removeEventListener('message', listener);
           resolve(e.data.signature);
-        } else if (e.data.action === actionsMap.sign && 'error' in e.data) {
-          window.removeEventListener('message', listener);
-          reject(e.data.error);
         }
       });
     });
@@ -58,16 +55,9 @@ window.cycloneWallet = {
     return new Promise((resolve, reject) => {
       window.postMessage({ action: actionsMap.send, data: params }, '*');
       window.addEventListener('message', function listener(e) {
-        if (
-          e.data.action === actionsMap.send &&
-          'status' in e.data &&
-          e.data.status === 'success'
-        ) {
+        if (e.data.action === actionsMap.send && 'txHash' in e.data) {
           window.removeEventListener('message', listener);
-          resolve();
-        } else if (e.data.action === actionsMap.send && 'error' in e.data) {
-          window.removeEventListener('message', listener);
-          reject(e.data.error);
+          resolve(e.data);
         }
       });
     });
@@ -76,16 +66,9 @@ window.cycloneWallet = {
     return new Promise((resolve, reject) => {
       window.postMessage({ action: actionsMap.signAndSend, data: params }, '*');
       window.addEventListener('message', function listener(e) {
-        if (
-          e.data.action === actionsMap.signAndSend &&
-          'status' in e.data &&
-          e.data.status === 'success'
-        ) {
+        if (e.data.action === actionsMap.signAndSend && 'txHash' in e.data) {
           window.removeEventListener('message', listener);
-          resolve();
-        } else if (e.data.action === actionsMap.signAndSend && 'error' in e.data) {
-          window.removeEventListener('message', listener);
-          reject(e.data.error);
+          resolve(e.data);
         }
       });
     });

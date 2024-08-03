@@ -174,7 +174,6 @@ export const Send: FC<SendProps> = observer(function Send_(props) {
     setSignMessage(
       requestDataType.signMessage || newSendTransactionListenerMessages.signMessage || ''
     );
-    console.log(form.getValues());
   }, [requestDataType, newSendTransactionListenerMessages]);
 
   useEffect(() => {
@@ -271,6 +270,23 @@ export const Send: FC<SendProps> = observer(function Send_(props) {
       };
 
       const txHash = await rootStore.transaction.send(data);
+      if (Object.keys(requestData).length !== 0) {
+        chrome.tabs.query({}, function (tabs) {
+          tabs.forEach((tab) => {
+            if (tab.id) {
+              chrome.tabs.sendMessage(tab.id, { action: 'SIGN_AND_SEND_TX_HASH', txHash });
+            }
+          });
+        });
+      } else if (sendTransactionListener) {
+        chrome.tabs.query({}, function (tabs) {
+          tabs.forEach((tab) => {
+            if (tab.id) {
+              chrome.tabs.sendMessage(tab.id, { action: 'SEND_TX_HASH', txHash });
+            }
+          });
+        });
+      }
       rootStore.resetTokens();
       pagesStore.send.setTxHash(txHash);
       onConfirm();

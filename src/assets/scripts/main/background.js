@@ -1,6 +1,6 @@
-import { wif, sign_message, verify_message } from './libs.js';
-import { Bitcoin } from './bitcoin-lib.js';
-import { sha256 } from './sha256.js';
+import { wif, sign_message, verify_message } from '../components/libs.js';
+import { Bitcoin } from '../components/bitcoin-lib.js';
+import { sha256 } from '../components/sha256.js';
 
 const actionsMap = {
   ready: 'ready',
@@ -17,6 +17,7 @@ let isPopupOpen = false;
 let isWalletPopupOpen = false;
 let activeAccount = null;
 let activeAddress = null;
+let txHash = null;
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   const currentDomain = new URL(sender.url).hostname;
@@ -92,12 +93,12 @@ function signRequest(activeAccount, signPayload) {
 
 const generationMessage = (data) => {
   const { token, amount, to, message } = data;
-  // if (message) {
-  //   return JSON.stringify({
-  //     method: 'execute',
-  //     message,
-  //   });
-  // }
+  if (message) {
+    return JSON.stringify({
+      method: 'execute',
+      message,
+    });
+  }
   if (token === 'native') {
     return JSON.stringify({
       method: 'execute',
@@ -117,7 +118,6 @@ function checkWhitelist(currentDomain, whitelist) {
 function confirmWhitelistPopup(currentDomain, request, sendResponse, whitelist) {
   if (!isPopupOpen) {
     isPopupOpen = true;
-    console.log('Opening whitelist popup');
     chrome.system.display.getInfo(function (displays) {
       const display = displays[0];
       const screenWidth = display.workArea.width;
@@ -155,14 +155,12 @@ function confirmWhitelistPopup(currentDomain, request, sendResponse, whitelist) 
               chrome.runtime.onMessage.removeListener(confirmListener);
               chrome.windows.remove(window.id, () => {
                 isPopupOpen = false;
-                console.log('Whitelist popup closed');
               });
             }
           };
           chrome.windows.onRemoved.addListener(function (windowId) {
             if (windowId === window.id) {
               isPopupOpen = false;
-              console.log('Whitelist popup closed via close button');
               chrome.runtime.onMessage.removeListener(confirmListener);
             }
           });
@@ -171,8 +169,6 @@ function confirmWhitelistPopup(currentDomain, request, sendResponse, whitelist) 
         }
       );
     });
-  } else {
-    console.log('Popup is already open for whitelisting');
   }
 }
 
@@ -213,9 +209,7 @@ async function handleTransactionsRequest(request, sendResponse) {
       sendResponse({ nativeBalance });
     } else if (request.action === actionsMap.sign) {
       if (activeAccount && request.data) {
-        console.log(request);
         const sendRequest = await getSendRequest(activeAccount, request.data);
-        console.log(sendRequest);
         sendResponse({ signature: sendRequest });
       } else {
         sendResponse({ status: 'No active account or message text' });
@@ -225,7 +219,7 @@ async function handleTransactionsRequest(request, sendResponse) {
         return sendResponse({ status: 'You dont have enough tokens' });
       if (!isWalletPopupOpen) {
         isWalletPopupOpen = true;
-        console.log('Opening wallet popup');
+
         chrome.system.display.getInfo(function (displays) {
           const display = displays[0];
           const screenWidth = display.workArea.width;
@@ -248,37 +242,27 @@ async function handleTransactionsRequest(request, sendResponse) {
             },
             function (window) {
               setTimeout(() => {
-                chrome.runtime.sendMessage(
-                  {
-                    action: 'SEND_TRANSACTION',
-                    data: request.data,
-                  },
-                  (response) => {
-                    console.log(response);
-                  }
-                );
+                chrome.runtime.sendMessage({
+                  action: 'SEND_TRANSACTION',
+                  data: request.data,
+                });
               }, 1000);
               sendResponse({ status: 'Popup opened', windowId: window.id });
               chrome.windows.onRemoved.addListener(function windowRemovedListener(windowId) {
                 if (windowId === window.id) {
                   isWalletPopupOpen = false;
-                  console.log('Wallet popup closed');
                   chrome.windows.onRemoved.removeListener(windowRemovedListener);
                 }
               });
             }
           );
         });
-      } else {
-        console.log('Popup is already open for send');
       }
     } else if (request.action === actionsMap.signAndSend) {
-      console.log(request.data.amount, nativeBalance);
       if (request.data.amount > nativeBalance)
-        return sendResponse({ status: 'You dont have enough tokens' });
+        return sendResponse({ message: 'You dont have enough tokens' });
       if (!isWalletPopupOpen) {
         isWalletPopupOpen = true;
-        console.log('Opening wallet popup');
         chrome.system.display.getInfo(function (displays) {
           const display = displays[0];
           const screenWidth = display.workArea.width;
@@ -301,29 +285,21 @@ async function handleTransactionsRequest(request, sendResponse) {
             },
             function (window) {
               setTimeout(() => {
-                chrome.runtime.sendMessage(
-                  {
-                    action: 'SIGN_AND_SEND_TRANSACTION',
-                    data: request.data,
-                  },
-                  (response) => {
-                    console.log(response);
-                  }
-                );
+                chrome.runtime.sendMessage({
+                  action: 'SIGN_AND_SEND_TRANSACTION',
+                  data: request.data,
+                });
               }, 1000);
-              sendResponse({ status: 'Popup opened', windowId: window.id });
+              sendResponse(true);
               chrome.windows.onRemoved.addListener(function windowRemovedListener(windowId) {
                 if (windowId === window.id) {
                   isWalletPopupOpen = false;
-                  console.log('Wallet popup closed');
                   chrome.windows.onRemoved.removeListener(windowRemovedListener);
                 }
               });
             }
           );
         });
-      } else {
-        console.log('Popup is already open for sign and send');
       }
     }
   } else {
@@ -334,7 +310,6 @@ async function handleTransactionsRequest(request, sendResponse) {
     }
     if (!isWalletPopupOpen) {
       isWalletPopupOpen = true;
-      console.log('Opening wallet popup');
       chrome.system.display.getInfo(function (displays) {
         const display = displays[0];
         const screenWidth = display.workArea.width;
@@ -360,15 +335,12 @@ async function handleTransactionsRequest(request, sendResponse) {
             chrome.windows.onRemoved.addListener(function windowRemovedListener(windowId) {
               if (windowId === window.id) {
                 isWalletPopupOpen = false;
-                console.log('Wallet popup closed');
                 chrome.windows.onRemoved.removeListener(windowRemovedListener);
               }
             });
           }
         );
       });
-    } else {
-      console.log('Popup is already open for getWalletAddress');
     }
   }
 }

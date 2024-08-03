@@ -57,8 +57,6 @@ export class TransactionController {
   };
 
   getSendRequest = async (values: SendValues): Promise<TxSendRequest> => {
-    console.log(values, 'values');
-
     const message = this.#signMessage(values.token, values.to, values.amount, values.signMessage);
     const sendRequest: TxSendRequest = {
       vm: '', // ignore
@@ -83,7 +81,6 @@ export class TransactionController {
       : null;
     const pk =
       activeAccount && new BitcoinLegacy.ECKey(Array.from(wif.decode(activeAccount.pk).privateKey));
-    console.log(pk, 'pk');
 
     const sign = signMessageLegacy(pk, signPayload, false);
 

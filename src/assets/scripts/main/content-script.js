@@ -10,7 +10,7 @@ const actionsMap = {
 
 const inject = function () {
   const script = document.createElement('script');
-  script.src = chrome.runtime.getURL('cyclone-wallet.js');
+  script.src = chrome.runtime.getURL('scripts/main/cyclone-wallet.js');
   script.onload = function () {
     this.remove();
   };
@@ -86,12 +86,11 @@ window.addEventListener('message', async (e) => {
         action: actionsMap.send,
         data: e.data.data,
       });
-
-      if (response && response.data) {
+      if (response && response.message) {
         window.postMessage(
           {
             action: actionsMap.send,
-            data: response.data,
+            message: response.message,
             response: true,
           },
           '*'
@@ -108,21 +107,11 @@ window.addEventListener('message', async (e) => {
         action: actionsMap.signAndSend,
         data: e.data.data,
       });
-
-      if (response && response.data) {
+      if (response && response.message) {
         window.postMessage(
           {
             action: actionsMap.signAndSend,
-            data: response.data,
-            response: true,
-          },
-          '*'
-        );
-      } else if (response && response.status) {
-        window.postMessage(
-          {
-            action: actionsMap.signAndSend,
-            status: response.status,
+            message: response.message,
             response: true,
           },
           '*'
@@ -135,3 +124,31 @@ window.addEventListener('message', async (e) => {
 });
 
 window.postMessage({ action: actionsMap.ready }, '*');
+
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  switch (request.action) {
+    case 'SIGN_AND_SEND_TX_HASH':
+      window.postMessage(
+        {
+          action: actionsMap.signAndSend,
+          txHash: request.txHash,
+          response: true,
+        },
+        '*'
+      );
+      sendResponse(true);
+      return true;
+    case 'SEND_TX_HASH':
+      window.postMessage(
+        {
+          action: actionsMap.send,
+          txHash: request.txHash,
+          response: true,
+        },
+        '*'
+      );
+      sendResponse(true);
+      return true;
+  }
+  return true;
+});

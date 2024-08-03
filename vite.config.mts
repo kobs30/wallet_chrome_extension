@@ -15,15 +15,8 @@ export default defineConfig({
     viteStaticCopy({
       targets: [
         { src: './src/assets/manifest.json', dest: '' },
-        { src: './src/assets/background.js', dest: '' },
-        { src: './src/assets/content-script.js', dest: '' },
-        { src: './src/assets/cyclone-wallet.js', dest: '' },
-        { src: './src/assets/confirm-whitelist.js', dest: '' },
+        { src: './src/assets/scripts', dest: '' },
         { src: './src/assets/confirm-whitelist.html', dest: '' },
-        { src: './src/assets/apply-popup-styles.js', dest: '' },
-        { src: './src/assets/libs.js', dest: '' },
-        { src: './src/assets/sha256.js', dest: '' },
-        { src: './src/assets/bitcoin-lib.js', dest: '' },
         { src: './src/assets/images', dest: 'assets' },
         { src: './src/assets/lib', dest: 'assets' },
       ],
@@ -37,7 +30,7 @@ export default defineConfig({
       ],
       body: [
         h('script', { src: './assets/index.js', type: 'module' }),
-        h('script', { src: './apply-popup-styles.js' }),
+        h('script', { src: './scripts/components/apply-popup-styles.js' }),
       ],
     }),
   ],
