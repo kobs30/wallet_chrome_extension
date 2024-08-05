@@ -5,7 +5,6 @@ const actionsMap = {
   getNativeBalance: 'getNativeBalance',
   signAndSend: 'signAndSend',
   sign: 'sign',
-  send: 'send',
 };
 
 const inject = function () {
@@ -44,7 +43,7 @@ window.addEventListener('message', async (e) => {
     try {
       const response = await chrome.runtime.sendMessage({ action: actionsMap.getNativeBalance });
 
-      if (response && response.nativeBalance >= 0) {
+      if (response && response.nativeBalance) {
         window.postMessage(
           {
             action: actionsMap.getNativeBalance,
@@ -65,11 +64,11 @@ window.addEventListener('message', async (e) => {
         action: actionsMap.sign,
         data: e.data.data,
       });
-      if (response && response.signature) {
+      if (response && (response.signature || 'isValid' in response)) {
         window.postMessage(
           {
             action: actionsMap.sign,
-            signature: response.signature,
+            data: response,
             response: true,
           },
           '*'
@@ -79,39 +78,18 @@ window.addEventListener('message', async (e) => {
       console.log('Error sign:', error);
     }
   }
-
-  if (e.data.action === actionsMap.send && !e.data.response) {
-    try {
-      const response = await chrome.runtime.sendMessage({
-        action: actionsMap.send,
-        data: e.data.data,
-      });
-      if (response && response.message) {
-        window.postMessage(
-          {
-            action: actionsMap.send,
-            message: response.message,
-            response: true,
-          },
-          '*'
-        );
-      }
-    } catch (error) {
-      console.log('Error send:', error);
-    }
-  }
-
   if (e.data.action === actionsMap.signAndSend && !e.data.response) {
     try {
       const response = await chrome.runtime.sendMessage({
         action: actionsMap.signAndSend,
         data: e.data.data,
       });
-      if (response && response.message) {
+
+      if (response && ('isValid' in response || 'txHash' in response)) {
         window.postMessage(
           {
             action: actionsMap.signAndSend,
-            message: response.message,
+            data: response,
             response: true,
           },
           '*'
@@ -124,31 +102,3 @@ window.addEventListener('message', async (e) => {
 });
 
 window.postMessage({ action: actionsMap.ready }, '*');
-
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  switch (request.action) {
-    case 'SIGN_AND_SEND_TX_HASH':
-      window.postMessage(
-        {
-          action: actionsMap.signAndSend,
-          txHash: request.txHash,
-          response: true,
-        },
-        '*'
-      );
-      sendResponse(true);
-      return true;
-    case 'SEND_TX_HASH':
-      window.postMessage(
-        {
-          action: actionsMap.send,
-          txHash: request.txHash,
-          response: true,
-        },
-        '*'
-      );
-      sendResponse(true);
-      return true;
-  }
-  return true;
-});

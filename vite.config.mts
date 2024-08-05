@@ -18,7 +18,6 @@ export default defineConfig({
         { src: './src/assets/scripts', dest: '' },
         { src: './src/assets/confirm-whitelist.html', dest: '' },
         { src: './src/assets/images', dest: 'assets' },
-        { src: './src/assets/lib', dest: 'assets' },
       ],
     }),
     insertHtml({
@@ -30,7 +29,7 @@ export default defineConfig({
       ],
       body: [
         h('script', { src: './assets/index.js', type: 'module' }),
-        h('script', { src: './scripts/components/apply-popup-styles.js' }),
+        h('script', { src: './scripts/components/popups/apply-popup-styles.js' }),
       ],
     }),
   ],

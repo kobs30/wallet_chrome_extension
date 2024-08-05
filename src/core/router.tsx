@@ -1,11 +1,4 @@
-import {
-  createHashRouter,
-  Navigate,
-  Outlet,
-  useLocation,
-  useNavigate,
-  useSearchParams,
-} from 'react-router-dom';
+import { createHashRouter, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import { FC, ReactNode, useEffect } from 'react';
 import { autorun } from 'mobx';
@@ -33,10 +26,6 @@ export const LocationTracker: FC<{ children: ReactNode }> = observer(function Lo
 
   const rootStore = useRootStore();
   const navigate = useNavigate();
-
-  const [searchParams] = useSearchParams();
-
-  console.log(searchParams.get('data'));
 
   // TODO: HERE (если на странице нажата кнопка "Send", отправляем юзера на /send-confirm
   useEffect(() => {

@@ -43,8 +43,6 @@ import { validateAmount } from './utils';
 
 export type SendProps = {
   confirm: boolean;
-  requestData: object;
-  sendTransactionListener: object | null;
   onConfirm(): void;
   onConfirmCancel(): void;
   onSubmit(): void;
@@ -69,97 +67,31 @@ const FEE_TOKEN_DROPDOWN_OFFSET = -34;
 let feeAbortController = new AbortController();
 
 export const Send: FC<SendProps> = observer(function Send_(props) {
-  const { confirm, requestData, sendTransactionListener, onConfirmCancel, onConfirm, onSubmit } =
-    props;
+  const { confirm, onConfirmCancel, onConfirm, onSubmit } = props;
 
   const rootStore = useRootStore();
   const pagesStore = usePagesStore();
 
   const location = useLocation();
-  const requestDataType = requestData as any;
-  const currsendTransactionListenerType = sendTransactionListener as any;
 
   const [isFeeTokenSelectOpened, setIsFeeTokenSelectOpened] = useState(false);
   const [isSignDialogOpened, setIsDialogOpened] = useState(false);
   const [signMessage, setSignMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [fee, setFee] = useState<number>(0);
-  const [newSendTransactionListenerMessages, setNewsendTransactionListenerMessages] = useState({
-    token: '',
-    to: '',
-    amount: 0,
-    signMessage: '',
-    feeCurrency: '',
-  });
-
-  useEffect(() => {
-    if (sendTransactionListener) {
-      const object = extractValues(currsendTransactionListenerType.message);
-      setNewsendTransactionListenerMessages((prev) => ({
-        ...prev,
-        token: object?.token ?? '',
-        to: object?.address,
-        amount: object?.amount ? +object.amount / 100 : 0,
-        feeCurrency: currsendTransactionListenerType.currencyFee,
-      }));
-    }
-  }, [sendTransactionListener]);
-
-  function extractValues(jsonString: string) {
-    const parsedObject = JSON.parse(jsonString);
-    const dataString = parsedObject.data;
-
-    const regexTransfer = /transfer\("([^"]+)",\s*(\d+)\)/;
-    const regexCallContract = /callContract\("([^"]+)",\s*"transfer",\s*"([^"]+)",\s*(\d+)\)/;
-
-    let matches = dataString.match(regexTransfer);
-    if (matches) {
-      const address = matches[1];
-      const amount = matches[2];
-      return { address, amount };
-    }
-
-    matches = dataString.match(regexCallContract);
-    if (matches) {
-      const token = matches[1];
-      const address = matches[2];
-      const amount = matches[3];
-      return { token, address, amount };
-    }
-
-    return null;
-  }
 
   const getFormDefaultValues = (): SendFormValues => {
     const symbol = new URLSearchParams(location.search).get('symbol');
     const token =
-      rootStore.tokens.noFeeTokens.find((t) => symbol === t.symbol)?.address ||
-      requestDataType.token ||
-      newSendTransactionListenerMessages.token ||
-      'native';
-    const defaultValue = {
+      rootStore.tokens.noFeeTokens.find((t) => symbol === t.symbol)?.address ?? 'native';
+    return {
       token,
-      feeTokenAddress:
-        requestDataType.feeCurrency || newSendTransactionListenerMessages.feeCurrency || 'native',
+      feeTokenAddress: 'native',
       feeTokenAmount: 0,
-      amount: requestDataType.amount
-        ? requestDataType.amount
-        : newSendTransactionListenerMessages.amount
-        ? newSendTransactionListenerMessages.amount
-        : 0,
-      signMessage: requestDataType.signMessage
-        ? requestDataType.signMessage
-        : newSendTransactionListenerMessages.signMessage
-        ? newSendTransactionListenerMessages.signMessage
-        : '',
-      to: requestDataType.to
-        ? requestDataType.to
-        : newSendTransactionListenerMessages.to
-        ? newSendTransactionListenerMessages.to
-        : '',
+      amount: 0,
+      signMessage: '',
+      to: '',
     };
-
-    return defaultValue;
   };
 
   const form = useForm<SendFormValues>({
@@ -170,16 +102,9 @@ export const Send: FC<SendProps> = observer(function Send_(props) {
   const updateFee = useCallback(debounce(200, setFee), []);
 
   useEffect(() => {
-    form.reset(getFormDefaultValues());
-    setSignMessage(
-      requestDataType.signMessage || newSendTransactionListenerMessages.signMessage || ''
-    );
-  }, [requestDataType, newSendTransactionListenerMessages]);
-
-  useEffect(() => {
     const values = form.getValues();
 
-    if (values.to?.length === 0 || values.amount === 0) return;
+    if (values.to.length === 0 || values.amount === 0) return;
 
     feeAbortController.abort();
     feeAbortController = new AbortController();
@@ -260,33 +185,13 @@ export const Send: FC<SendProps> = observer(function Send_(props) {
     setIsLoading(true);
     try {
       const values = form.getValues();
-
-      const data = {
+      const txHash = await rootStore.transaction.send({
         token: values.token,
         to: values.to,
         amount: isMaxAmount ? values.amount - fee : values.amount,
         signMessage: values.signMessage,
         feeCurrency: values.feeTokenAddress,
-      };
-
-      const txHash = await rootStore.transaction.send(data);
-      if (Object.keys(requestData).length !== 0) {
-        chrome.tabs.query({}, function (tabs) {
-          tabs.forEach((tab) => {
-            if (tab.id) {
-              chrome.tabs.sendMessage(tab.id, { action: 'SIGN_AND_SEND_TX_HASH', txHash });
-            }
-          });
-        });
-      } else if (sendTransactionListener) {
-        chrome.tabs.query({}, function (tabs) {
-          tabs.forEach((tab) => {
-            if (tab.id) {
-              chrome.tabs.sendMessage(tab.id, { action: 'SEND_TX_HASH', txHash });
-            }
-          });
-        });
-      }
+      });
       rootStore.resetTokens();
       pagesStore.send.setTxHash(txHash);
       onConfirm();

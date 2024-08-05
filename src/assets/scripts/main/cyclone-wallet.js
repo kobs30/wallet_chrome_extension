@@ -1,23 +1,11 @@
-const walletTypesMap = {
-  extension: 'EXTENSION',
-  web: 'WEB',
-};
-
 const actionsMap = {
   getWalletAddress: 'getWalletAddress',
   getNativeBalance: 'getNativeBalance',
   signAndSend: 'signAndSend',
   sign: 'sign',
-  send: 'send',
 };
 
 window.cycloneWallet = {
-  init: (type) => {
-    if (type === walletTypesMap.extension) {
-    }
-    if (type === walletTypesMap.web) {
-    }
-  },
   getWalletAddress: () => {
     return new Promise((resolve) => {
       window.postMessage({ action: actionsMap.getWalletAddress }, '*');
@@ -44,20 +32,17 @@ window.cycloneWallet = {
     return new Promise((resolve, reject) => {
       window.postMessage({ action: actionsMap.sign, data: params }, '*');
       window.addEventListener('message', function listener(e) {
-        if (e.data.action === actionsMap.sign && 'signature' in e.data) {
+        if (
+          e.data.action === actionsMap.sign &&
+          typeof e.data.data === 'object' &&
+          e.data.data !== null &&
+          ('signature' in e.data.data || 'isValid' in e.data.data)
+        ) {
           window.removeEventListener('message', listener);
-          resolve(e.data.signature);
-        }
-      });
-    });
-  },
-  send: (params) => {
-    return new Promise((resolve, reject) => {
-      window.postMessage({ action: actionsMap.send, data: params }, '*');
-      window.addEventListener('message', function listener(e) {
-        if (e.data.action === actionsMap.send && 'txHash' in e.data) {
+          resolve(e.data.data);
+        } else if (e.data.action === actionsMap.sign && typeof e.data.data !== 'object') {
           window.removeEventListener('message', listener);
-          resolve(e.data);
+          resolve({ isValid: false, message: 'Payload is not an object or is null' });
         }
       });
     });
@@ -66,9 +51,17 @@ window.cycloneWallet = {
     return new Promise((resolve, reject) => {
       window.postMessage({ action: actionsMap.signAndSend, data: params }, '*');
       window.addEventListener('message', function listener(e) {
-        if (e.data.action === actionsMap.signAndSend && 'txHash' in e.data) {
+        if (
+          e.data.action === actionsMap.signAndSend &&
+          typeof e.data.data === 'object' &&
+          e.data.data !== null &&
+          ('txHash' in e.data.data || 'isValid' in e.data.data)
+        ) {
           window.removeEventListener('message', listener);
-          resolve(e.data);
+          resolve(e.data.data);
+        } else if (e.data.action === actionsMap.signAndSend && typeof e.data.data !== 'object') {
+          window.removeEventListener('message', listener);
+          resolve({ isValid: false, message: 'Payload is not an object or is null' });
         }
       });
     });
