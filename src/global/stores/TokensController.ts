@@ -71,6 +71,7 @@ export class TokensController {
       runInAction(() => {
         this.isError = true;
       });
+      console.log(e);
     } finally {
       runInAction(() => {
         this.isLoading = false;

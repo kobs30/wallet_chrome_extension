@@ -1,8 +1,9 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 
 import { TwoColumnFooter } from 'components';
 import { CycloneSymbolOutlined } from 'components/icons/brand';
 import { Coins, Globe, LockOpenOutlined, QuestionCircle, Wifi } from 'components/icons';
+import { useRootStore } from 'core';
 
 import styles from './Settings.module.scss';
 import { SettingsLink, SettingsLinkProps } from './SettingsLink/SettingsLink';
@@ -10,9 +11,14 @@ import { pluralize } from '../../utils/textFormat';
 import { DISCORD_URL, VERSION } from '../../config';
 
 export const Settings: FC = () => {
+  const [sitesCount, setSitesCount] = useState(0);
+  const rootStore = useRootStore();
   const gateway = 'Cyclonchain.com';
-  const sitesCount = 10;
   const feeToken = 'CYCL';
+
+  chrome.storage.local.get('whitelist', function (params) {
+    setSitesCount(params.whitelist[rootStore.wallet.activeAddress]?.length || 0);
+  });
 
   const settingsLinks: SettingsLinkProps[] = [
     {
@@ -32,7 +38,7 @@ export const Settings: FC = () => {
       pathname: '/settings/connected-sites',
       title: 'Connected Sites',
       description: pluralize(sitesCount, 'site'),
-      disabled: true,
+      disabled: !sitesCount ? true : false,
     },
     {
       icon: <Coins />,

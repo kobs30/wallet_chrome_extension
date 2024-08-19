@@ -114,7 +114,7 @@ export const ChangePassword: FC<ChangePasswordProps> = observer(function ChangeP
       rootStore.vault.syncAccounts();
       onSubmitSuccess();
     } catch (e) {
-      /* empty */
+      console.log(e);
     }
   };
 

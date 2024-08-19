@@ -33,7 +33,7 @@ export const EnterPasswordForm: FC<EnterPasswordFormProps> = observer(function E
     try {
       onSubmitSuccess();
     } catch (e) {
-      /* empty */
+      console.log(e);
     }
   };
 

@@ -21,28 +21,30 @@ let activeAccount = null;
 let activeAddress = null;
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  const currentDomain = new URL(sender.url).hostname;
+  const currentDomain = new URL(sender.url).origin;
 
   chrome.storage.local.get('whitelist', (result) => {
-    const whitelist = result.whitelist || [];
+    const whitelist = result.whitelist || {};
+    const accountWhitelist = whitelist[activeAddress] || [];
 
     switch (request.action) {
       case actionsMap.getWalletAddress:
       case actionsMap.getNativeBalance:
       case actionsMap.sign:
       case actionsMap.signAndSend:
-        isValidTransactionsApi(currentDomain, whitelist, request, sendResponse);
-        return true;
+        isValidTransactionsApi(currentDomain, accountWhitelist, request, sendResponse);
+        break;
       case 'VAULT_PASSWORD_CHANGE':
         isAuth = request.password;
         nativeBalance = request.nativeBalance;
         activeAccount = request.activeAccount;
         activeAddress = request.activeAddress;
         sendResponse({ status: 'Password changed' });
-        return true;
+        break;
+      default:
+        sendResponse({ status: 'Unknown action' });
     }
   });
-
   return true;
 });
 
@@ -139,14 +141,50 @@ async function signAndSend(payload) {
 }
 
 function checkWhitelist(currentDomain, whitelist) {
-  return whitelist.includes(currentDomain);
+  return whitelist.some((entry) => entry.url === currentDomain && entry.state === true);
 }
 
 function isValidTransactionsApi(currentDomain, whitelist, request, sendResponse) {
-  if (checkWhitelist(currentDomain, whitelist)) {
-    handleTransactionsRequest(request, sendResponse);
+  if (isAuth) {
+    if (checkWhitelist(currentDomain, whitelist)) {
+      handleTransactionsRequest(request, sendResponse);
+    } else {
+      confirmWhitelistPopup(currentDomain, request, sendResponse, whitelist);
+    }
   } else {
-    confirmWhitelistPopup(currentDomain, request, sendResponse, whitelist);
+    if (!isPopupOpen) {
+      isPopupOpen = true;
+      chrome.system.display.getInfo((displays) => {
+        const display = displays[0];
+        const { width: screenWidth, height: screenHeight } = display.workArea;
+        const windowWidth = 360;
+        const windowHeight = 650;
+        const left = screenWidth - windowWidth;
+        const top = 70;
+
+        chrome.windows.create(
+          {
+            url: chrome.runtime.getURL('index.html?popup=true'),
+            type: 'popup',
+            focused: true,
+            width: windowWidth,
+            height: windowHeight,
+            left,
+            top,
+          },
+          (window) => {
+            sendResponse({ status: 'Popup opened', windowId: window.id });
+
+            chrome.windows.onRemoved.addListener(function windowRemovedListener(windowId) {
+              if (windowId === window.id) {
+                isPopupOpen = false;
+                chrome.windows.onRemoved.removeListener(windowRemovedListener);
+              }
+            });
+          }
+        );
+      });
+    }
   }
 }
 
@@ -157,14 +195,14 @@ function confirmWhitelistPopup(currentDomain, request, sendResponse, whitelist) 
     chrome.system.display.getInfo((displays) => {
       const display = displays[0];
       const { width: screenWidth, height: screenHeight } = display.workArea;
-      const windowWidth = 400;
-      const windowHeight = 300;
+      const windowWidth = 360;
+      const windowHeight = 650;
       const left = screenWidth - windowWidth;
       const top = 70;
 
       chrome.windows.create(
         {
-          url: chrome.runtime.getURL('confirm-whitelist.html'),
+          url: chrome.runtime.getURL('index.html?popup=true'),
           type: 'popup',
           focused: true,
           width: windowWidth,
@@ -173,25 +211,60 @@ function confirmWhitelistPopup(currentDomain, request, sendResponse, whitelist) 
           top,
         },
         (window) => {
+          try {
+            setTimeout(() => {
+              chrome.runtime.sendMessage({ action: request.action, currentDomain });
+            }, 500);
+          } catch (error) {
+            console.log(error);
+          }
           const confirmListener = (confirmRequest, confirmSender, confirmSendResponse) => {
             if (confirmRequest.action === 'CONFIRM_PERMISSION') {
               if (confirmRequest.confirmed) {
-                whitelist.push(currentDomain);
-                chrome.storage.local.set({ whitelist }, () => {
-                  isPopupOpen = false;
-                  handleTransactionsRequest(request, sendResponse);
+                chrome.storage.local.get('whitelist', (result) => {
+                  let whitelist = result.whitelist || {};
+
+                  if (!whitelist[activeAddress]) {
+                    whitelist[activeAddress] = [];
+                  }
+                  const accountWhitelist = whitelist[activeAddress] || [];
+                  const existingEntry = accountWhitelist.find((item) => item.url === currentDomain);
+                  if (existingEntry) {
+                    existingEntry.state = true;
+                  } else {
+                    accountWhitelist.push({ url: currentDomain, state: true });
+                  }
+                  chrome.storage.local.set({ whitelist }, () => {
+                    handleTransactionsRequest(request, sendResponse);
+                  });
                 });
               } else {
-                sendResponse({ error: 'User denied the request' });
-                isPopupOpen = false;
+                sendResponse(true);
               }
-              chrome.runtime.onMessage.removeListener(confirmListener);
               chrome.windows.remove(window.id, () => {
                 isPopupOpen = false;
               });
             } else if (confirmRequest.action === 'CONFIRM_ONE_TIME_PERMISSION') {
-              handleTransactionsRequest(request, sendResponse);
-              chrome.runtime.onMessage.removeListener(confirmListener);
+              chrome.storage.local.get('whitelist', (result) => {
+                let whitelist = result.whitelist || {};
+
+                if (!whitelist[activeAddress]) {
+                  whitelist[activeAddress] = [];
+                }
+                const accountWhitelist = whitelist[activeAddress] || [];
+                const existingEntry = accountWhitelist.find((item) => item.url === currentDomain);
+
+                if (existingEntry) {
+                  existingEntry.state = false;
+                } else {
+                  accountWhitelist.push({ url: currentDomain, state: false });
+                }
+
+                whitelist[activeAddress] = accountWhitelist;
+                chrome.storage.local.set({ whitelist }, () => {
+                  handleTransactionsRequest(request, sendResponse);
+                });
+              });
               chrome.windows.remove(window.id, () => {
                 isPopupOpen = false;
               });
@@ -237,90 +310,54 @@ function validatePayload(input, type) {
 }
 
 async function handleTransactionsRequest(request, sendResponse) {
-  if (isAuth) {
-    switch (request.action) {
-      case actionsMap.getWalletAddress:
-        chrome.storage.local.get('activeAddress', (items) => {
-          sendResponse({ walletAddress: items.activeAddress });
-        });
-        break;
-      case actionsMap.getNativeBalance:
-        sendResponse({ nativeBalance });
-        break;
-      case actionsMap.sign:
-        if (activeAccount && request.data) {
-          const validationResult = validatePayload(request.data, 'sign');
-          if (validationResult.isValid) {
-            const { signature } = signSignature(activeAccount, request.data.message);
-            sendResponse({ signature, sender: activeAddress, message: request.data.message });
-          } else {
-            sendResponse(validationResult);
-          }
-        } else {
-          sendResponse({ message: 'No active account or message text' });
-        }
-        break;
-      case actionsMap.signAndSend:
-        const signAndSendValidationResult = validatePayload(request.data, 'signAndSend');
-        if (!signAndSendValidationResult.isValid) {
-          sendResponse(signAndSendValidationResult);
-          break;
-        }
-
-        const extractedPayload = await extractValues(request.data.message);
-        if (
-          extractedPayload &&
-          extractedPayload.amount &&
-          +extractedPayload.amount / 100 > nativeBalance
-        ) {
-          sendResponse({ isValid: false, message: "You don't have enough tokens" });
-          break;
-        }
-
-        const responseSignAndSend = await signAndSend({
-          ...extractedPayload,
-          message: request.data.message,
-          currencyFee: request.data.currencyFee,
-        });
-
-        sendResponse(responseSignAndSend);
-        break;
-      default:
-        break;
-    }
-  } else {
-    if (!isWalletPopupOpen) {
-      isWalletPopupOpen = true;
-      chrome.system.display.getInfo((displays) => {
-        const display = displays[0];
-        const { width: screenWidth, height: screenHeight } = display.workArea;
-        const windowWidth = 360;
-        const windowHeight = 650;
-        const left = screenWidth - windowWidth;
-        const top = 70;
-
-        chrome.windows.create(
-          {
-            url: chrome.runtime.getURL('index.html?popup=true'),
-            type: 'popup',
-            focused: true,
-            width: windowWidth,
-            height: windowHeight,
-            left,
-            top,
-          },
-          (window) => {
-            sendResponse({ status: 'Popup opened', windowId: window.id });
-
-            chrome.windows.onRemoved.addListener(function windowRemovedListener(windowId) {
-              if (windowId === window.id) {
-                isWalletPopupOpen = false;
-                chrome.windows.onRemoved.removeListener(windowRemovedListener);
-              }
-            });
-          }
-        );
+  switch (request.action) {
+    case actionsMap.getWalletAddress:
+      chrome.storage.local.get('activeAddress', (items) => {
+        sendResponse({ walletAddress: items.activeAddress });
       });
-    }
+      break;
+    case actionsMap.getNativeBalance:
+      sendResponse({ nativeBalance });
+      break;
+    case actionsMap.sign:
+      if (activeAccount && request.data) {
+        const validationResult = validatePayload(request.data, 'sign');
+        if (validationResult.isValid) {
+          const { signature } = signSignature(activeAccount, request.data.message);
+          sendResponse({ signature, sender: activeAddress, message: request.data.message });
+        } else {
+          sendResponse(validationResult);
+        }
+      } else {
+        sendResponse({ message: 'No active account or message text' });
+      }
+      break;
+    case actionsMap.signAndSend:
+      const signAndSendValidationResult = validatePayload(request.data, 'signAndSend');
+      if (!signAndSendValidationResult.isValid) {
+        sendResponse(signAndSendValidationResult);
+        break;
+      }
+
+      const extractedPayload = await extractValues(request.data.message);
+      if (
+        extractedPayload &&
+        extractedPayload.amount &&
+        +extractedPayload.amount / 100 > nativeBalance
+      ) {
+        sendResponse({ isValid: false, message: "You don't have enough tokens" });
+        break;
+      }
+
+      const responseSignAndSend = await signAndSend({
+        ...extractedPayload,
+        message: request.data.message,
+        currencyFee: request.data.currencyFee,
+      });
+
+      sendResponse(responseSignAndSend);
+      break;
+    default:
+      sendResponse({ message: 'Unknown action' });
   }
 }

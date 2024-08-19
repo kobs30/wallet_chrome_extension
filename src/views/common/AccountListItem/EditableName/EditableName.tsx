@@ -41,7 +41,11 @@ export const EditableName: FC<EditNameProps> = (props) => {
   const handleSubmit = () => {
     setEdit(false);
     const values = form.getValues();
-    values.name.length === 0 ? form.setValue('name', name) : onSave(values.name);
+    if (values.name.length === 0) {
+      form.setValue('name', name);
+    } else {
+      onSave(values.name);
+    }
   };
 
   const handleKeyDown: KeyboardEventHandler<HTMLFormElement> = (e) => {

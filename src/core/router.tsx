@@ -44,7 +44,7 @@ export const LocationTracker: FC<{ children: ReactNode }> = observer(function Lo
         }
       });
     } catch (e) {
-      /* empty */
+      console.log(e);
     }
   }, []);
 
@@ -122,6 +122,10 @@ export const router = createHashRouter([
       {
         path: '/settings/change-password',
         element: <Settings.ChangePasswordPage />,
+      },
+      {
+        path: '/settings/connected-sites',
+        element: <Settings.ConnectedSitesPage />,
       },
       {
         path: '/send-confirm',

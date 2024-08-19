@@ -23,7 +23,9 @@ export const IndexPage: FC = observer(function IndexPage_() {
       }, TX_RESULT_TIMEOUT);
     }
     return () => {
-      timeout && clearTimeout(timeout);
+      if (timeout) {
+        clearTimeout(timeout);
+      }
     };
   }, [pagesStore.send.txHash]);
 

@@ -56,7 +56,7 @@ export const AddAccount: FC<AddAccountProps> = observer(function AddAccount_(pro
       rootStore.wallet.addAccount(values.name);
       onSubmitSuccess();
     } catch (e) {
-      /* empty */
+      console.log(e);
     }
   };
 

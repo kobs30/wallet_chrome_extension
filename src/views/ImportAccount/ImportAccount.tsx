@@ -36,7 +36,7 @@ export const ImportAccount: FC<ImportAccountProps> = observer(function ImportAcc
       );
       onSubmitSuccess();
     } catch (e) {
-      /* empty */
+      console.log(e);
     }
   };
 

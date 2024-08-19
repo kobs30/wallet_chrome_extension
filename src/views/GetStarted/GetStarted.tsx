@@ -42,7 +42,7 @@ export const GetStarted: FC<GetStartedProps> = observer(function GetStarted_(pro
       const values = form.getValues();
       onSubmitSuccess(values.privateKey);
     } catch (e) {
-      /* empty */
+      console.log(e);
     }
   };
 

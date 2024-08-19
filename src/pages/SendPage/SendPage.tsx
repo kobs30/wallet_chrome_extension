@@ -22,7 +22,7 @@ export const SendPage: FC = () => {
     try {
       await chrome.storage.session.remove(SEND_LS_KEY);
     } catch (e) {
-      /* empty */
+      console.log(e);
     }
   };
 

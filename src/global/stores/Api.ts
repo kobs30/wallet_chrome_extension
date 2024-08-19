@@ -14,6 +14,7 @@ export class Api {
       console.log('message=', message);
       console.log('sender=', sender);
       console.log('response=', sendResponse);
+      sendResponse(true);
     };
     chrome.runtime.onMessage.addListener(listener);
 

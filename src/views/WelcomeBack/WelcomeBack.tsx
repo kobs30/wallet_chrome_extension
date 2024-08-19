@@ -60,7 +60,7 @@ export const WelcomeBack: FC<WelcomeBackProps> = observer(function WelcomeBack_(
       await rootStore.vault.submitPassword(values.password);
       onSubmitSuccess();
     } catch (e) {
-      /* empty */
+      console.log(e);
     }
   };
 

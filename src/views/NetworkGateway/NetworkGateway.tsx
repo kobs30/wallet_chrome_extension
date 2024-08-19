@@ -64,7 +64,7 @@ export const NetworkGateway: FC = observer(function NetworkGateway_() {
       }
       rootStore.network.resetNetwork();
     } catch (e) {
-      /* empty */
+      console.log(e);
     } finally {
       form.reset(getDefaultValues());
     }

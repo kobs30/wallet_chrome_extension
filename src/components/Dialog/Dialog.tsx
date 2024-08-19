@@ -148,10 +148,20 @@ const CLOSE_ICON_SIZE = 18;
 export const DialogHeading = forwardRef<HTMLButtonElement, { title: string }>((props, ref) => {
   const { title } = props;
   const { setOpen } = useDialogContext();
+  const handleClick = () => {
+    if (title === 'Confirm connection') {
+      chrome.runtime.sendMessage({
+        action: 'CONFIRM_PERMISSION',
+        confirmed: false,
+        windowId: chrome.windows.WINDOW_ID_CURRENT,
+      });
+    }
+    setOpen(false);
+  };
   return (
     <div className={styles.heading}>
       <span className={styles.title}>{title}</span>
-      <button type="button" ref={ref} onClick={() => setOpen(false)} className={styles.closeButton}>
+      <button type="button" ref={ref} onClick={handleClick} className={styles.closeButton}>
         <CloseRounded width={CLOSE_ICON_SIZE} height={CLOSE_ICON_SIZE} />
       </button>
     </div>

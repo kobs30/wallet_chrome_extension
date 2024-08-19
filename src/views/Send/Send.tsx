@@ -131,7 +131,7 @@ export const Send: FC<SendProps> = observer(function Send_(props) {
       try {
         chrome.storage.session.set({ send: value }).catch(() => void 0);
       } catch (e) {
-        /* empty */
+        console.log(e);
       }
     });
   }, [form.watch]);

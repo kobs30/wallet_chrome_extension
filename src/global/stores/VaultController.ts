@@ -29,7 +29,7 @@ export class VaultController {
         runInAction(() => {
           this.password = '';
         });
-        console.error('Chrome Storage APi is not available');
+        console.log('Chrome Storage APi is not available', e);
       }
     } else {
       const password = sessionStorage.getItem('password') || '';
@@ -83,7 +83,7 @@ export class VaultController {
       JSON.parse(d);
       return true;
     } catch (e) {
-      console.error(e);
+      console.log(e);
       return false;
     }
   };
@@ -93,7 +93,7 @@ export class VaultController {
       try {
         await chrome.storage.session.set({ password });
       } catch (e) {
-        /* empty */
+        console.log(e);
       }
     } else {
       sessionStorage.setItem('password', password);
@@ -107,7 +107,7 @@ export class VaultController {
       try {
         await chrome.storage.session.remove('password');
       } catch (e) {
-        /* empty */
+        console.log(e);
       }
     } else {
       sessionStorage.removeItem('password');

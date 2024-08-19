@@ -1,0 +1,228 @@
+:root {
+  --cc-color-background: #000;
+  --cc-color-primary: #7d2bff;
+  --cc-color-pink: #e40ba1;
+  --cc-color-yellow: #f7de33;
+  --cc-color-green: #33f763;
+  --cc-color-text: #fff;
+  --cc-color-text-inverse: #000;
+  --cc-color-gradient-a: #32c5ff;
+  --cc-color-gradient-b: #b620e0;
+  --cc-color-gradient-c: #f7b500;
+  --cc-font-family: 'Manrope', sans-serif;
+}
+
+.root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-between;
+}
+.inputs {
+  display: flex;
+  flex-direction: column;
+  row-gap: 16px;
+}
+.site {
+  position: relative;
+  display: flex;
+  align-items: center;
+  column-gap: 6px;
+  padding: 8px 10px;
+  cursor: pointer;
+  transition: background-color 0.1s;
+}
+.site:hover {
+  background-color: #141414;
+}
+.site::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 8px;
+  left: 10px;
+  height: 1px;
+  opacity: 0.48;
+  background-color: #282828;
+  pointer-events: none;
+}
+.serialNumber {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 36px;
+  min-height: 36px;
+  border-radius: 8px;
+  background-color: #141414;
+  position: relative;
+}
+.serialNumber > span {
+  opacity: 0.2;
+  color: #fff;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+}
+.checked {
+  background-image: linear-gradient(
+    225deg,
+    var(--cc-color-gradient-a),
+    var(--cc-color-gradient-b) 49%,
+    var(--cc-color-gradient-c)
+  );
+}
+.checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  border-radius: 2px;
+  width: 12px;
+  height: 12px;
+  color: var(--cc-color-text-inverse);
+  background-color: #141414;
+  box-shadow: 0 0 0 1px var(--cc-color-background);
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+.title {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.hostname {
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.54;
+  color: #fff;
+  letter-spacing: normal;
+}
+.title > span {
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: #fff;
+  letter-spacing: normal;
+}
+.sitesList {
+  height: auto;
+  max-height: 470px;
+  padding-bottom: 10px;
+  overflow-y: auto;
+  flex: 1;
+  padding-top: 12px;
+  scrollbar-width: thin;
+  scrollbar-color: #555 #1c1c1c;
+}
+
+.sitesList::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.sitesList::-webkit-scrollbar-track {
+  background-color: #1c1c1c;
+  border-radius: 10px;
+}
+
+.sitesList::-webkit-scrollbar-thumb {
+  background-color: #555;
+  border-radius: 10px;
+  border: 2px solid #333;
+}
+
+.sitesList::-webkit-scrollbar-thumb:hover {
+  background-color: #888;
+}
+
+.sitesList::-webkit-scrollbar-thumb:active {
+  background-color: #aaa;
+}
+
+.confirmBtnWrap {
+  padding: 0 12px 12px;
+}
+.more {
+  display: none;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+.site:hover .more {
+  display: flex;
+}
+.moreIcon {
+  width: 18px;
+}
+.moreTooltip {
+  display: none;
+  position: absolute;
+  top: -28px;
+  right: 0;
+  z-index: 10;
+  width: 56px;
+  height: 28px;
+  justify-content: center;
+  align-items: center;
+  opacity: 0.9;
+  border-radius: 4px;
+  box-shadow: 0 8px 16px 0 rgba(8, 45, 61, 0.2), 0 4px 12px 0 rgba(8, 45, 61, 0.1);
+  background-color: #131313;
+  font-size: 10px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 2.8;
+  letter-spacing: normal;
+  color: #eaeef2;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.disconnect {
+  display: flex;
+  position: absolute;
+  bottom: -55px;
+  right: 0;
+  z-index: 10;
+  width: 190px;
+  height: 52px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  box-shadow: 0 8px 16px 0 rgba(8, 45, 61, 0.2), 0 4px 12px 0 rgba(8, 45, 61, 0.1);
+  border: solid 0.5px rgba(255, 255, 255, 0.2);
+  background-color: #000;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.disconnect div {
+  height: 36px;
+  padding-left: 15px;
+  display: flex;
+  align-items: center;
+  column-gap: 11px;
+  width: 100%;
+}
+.disconnect div:hover {
+  background-color: #141414;
+}
+.disconnect div svg {
+  width: 18px;
+}
+.disconnect div p {
+  font-size: 12px;
+  font-weight: 500;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.67;
+  letter-spacing: -0.12px;
+  color: #fff;
+}
+.moreIcon:hover + .moreTooltip {
+  display: inline-flex;
+}

@@ -7,7 +7,7 @@ export const WALLET_EXPLORER_URL = 'https://explorer.cyclonechain.com/wallet-sea
 export const TRANSACTION_EXPLORER_URL = 'https://explorer.cyclonechain.com/transaction-search.html';
 export const DISCORD_URL = 'https://discord.gg/vCzbn3AXKv';
 
-export const VERSION = '1.0.2';
+export const VERSION = '1.0.3';
 
 export const IS_PLUGIN = true;
 
