@@ -16,9 +16,10 @@ const api_send = 'http://164.68.127.226:9231/api/gw/v1/transaction/send';
 let isAuth = null;
 let nativeBalance = 0;
 let isPopupOpen = false;
-let isWalletPopupOpen = false;
 let activeAccount = null;
 let activeAddress = null;
+
+chrome.runtime.onInstalled.addListener((details) => chrome.storage.local.remove('whitelist'));
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   const currentDomain = new URL(sender.url).origin;

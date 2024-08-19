@@ -17,7 +17,12 @@ export const Settings: FC = () => {
   const feeToken = 'CYCL';
 
   chrome.storage.local.get('whitelist', function (params) {
-    setSitesCount(params.whitelist[rootStore.wallet.activeAddress]?.length || 0);
+    if (params?.whitelist && rootStore.wallet?.activeAddress) {
+      const sites = params.whitelist[rootStore.wallet.activeAddress];
+      setSitesCount(sites?.length || 0);
+    } else {
+      setSitesCount(0);
+    }
   });
 
   const settingsLinks: SettingsLinkProps[] = [

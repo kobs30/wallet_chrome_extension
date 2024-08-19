@@ -11,9 +11,9 @@ export class Api {
 
   listen = (): (() => void) => {
     const listener = (message: any, sender: chrome.runtime.MessageSender, sendResponse: any) => {
-      console.log('message=', message);
-      console.log('sender=', sender);
-      console.log('response=', sendResponse);
+      // console.log('message=', message);
+      // console.log('sender=', sender);
+      // console.log('response=', sendResponse);
       sendResponse(true);
     };
     chrome.runtime.onMessage.addListener(listener);
