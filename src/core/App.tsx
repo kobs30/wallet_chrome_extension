@@ -16,17 +16,6 @@ import styles from './App.module.scss';
 export const Pages = observer(() => {
   const rootStore = useRootStore();
 
-  useEffect(() => {
-    try {
-      const disposer = rootStore.api.listen();
-      return () => {
-        disposer();
-      };
-    } catch (e) {
-      console.log(e);
-    }
-  }, []);
-
   // TODO: HERE
   useEffect(() => {
     const listenMessagesDisposer = rootStore.web.listenMessages();
@@ -131,53 +120,103 @@ export const App: FC = () => {
     setCheckedItems(!checkedItems);
   };
 
-  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.action in actionsMap && request.currentDomain) {
-      const url = new URL(request.currentDomain);
-      setCurrentURL(url);
-      setIsOpenDialog(true);
-      setActiveAccount(
-        rootStore ? rootStore.wallet.findAccountByAddress(rootStore.wallet.activeAddress) : null
-      );
-
-      chrome.storage.local.get('whitelist', (result) => {
-        const whitelist = result.whitelist || {};
-        const accountWhitelist = whitelist[rootStore.wallet.activeAddress] || [];
-        const existingEntry = accountWhitelist.find(
-          (item: { url: string }) => item.url === (url && url.origin && url.origin)
+  useEffect(() => {
+    const handleMessages = (request: any) => {
+      if (request.action in actionsMap && request.currentDomain) {
+        const url = new URL(request.currentDomain);
+        setCurrentURL(url);
+        setIsOpenDialog(true);
+        setActiveAccount(
+          rootStore ? rootStore.wallet.findAccountByAddress(rootStore.wallet.activeAddress) : null
         );
 
-        if (existingEntry) {
-          setIsWhitelisted(existingEntry);
-        } else {
-          setIsWhitelisted(null);
-        }
-      });
+        chrome.storage.local.get('whitelist', (result: any) => {
+          const whitelist = result.whitelist || {};
+          const accountWhitelist = whitelist[rootStore.wallet.activeAddress] || [];
+          const existingEntry = accountWhitelist.find(
+            (item: { url: string }) => item.url === (url && url.origin && url.origin)
+          );
 
-      switch (request.action) {
-        case 'getWalletAddress':
-          setActionText('Get the address of the current wallet');
-          break;
-        case 'getNativeBalance':
-          setActionText('Get the native balance of the current wallet');
-          break;
-        case 'sign':
-          setActionText('Sign the transaction');
-          break;
-        case 'signAndSend':
-          setActionText('Sign and send the transaction');
-          break;
-        default:
-          sendResponse(true);
-          break;
+          if (existingEntry) {
+            setIsWhitelisted(existingEntry);
+          } else {
+            setIsWhitelisted(null);
+          }
+        });
+
+        switch (request.action) {
+          case 'getWalletAddress':
+            setActionText('Get the address of the current wallet');
+            break;
+          case 'getNativeBalance':
+            setActionText('Get the native balance of the current wallet');
+            break;
+          case 'sign':
+            setActionText('Sign the transaction');
+            break;
+          case 'signAndSend':
+            setActionText('Sign and send the transaction');
+            break;
+        }
+      } else {
+        setIsOpenDialog(false);
+        setActionText('');
       }
-      sendResponse(true);
-    } else {
-      sendResponse(false);
-      setIsOpenDialog(false);
-      setActionText('');
-    }
-  });
+    };
+    const disposer = rootStore.api.listen(handleMessages);
+
+    return () => {
+      disposer();
+    };
+  }, [rootStore.api]);
+
+  // chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  //   if (request.action in actionsMap && request.currentDomain) {
+  //     const url = new URL(request.currentDomain);
+  //     setCurrentURL(url);
+  //     setIsOpenDialog(true);
+  //     setActiveAccount(
+  //       rootStore ? rootStore.wallet.findAccountByAddress(rootStore.wallet.activeAddress) : null
+  //     );
+
+  //     chrome.storage.local.get('whitelist', (result) => {
+  //       const whitelist = result.whitelist || {};
+  //       const accountWhitelist = whitelist[rootStore.wallet.activeAddress] || [];
+  //       const existingEntry = accountWhitelist.find(
+  //         (item: { url: string }) => item.url === (url && url.origin && url.origin)
+  //       );
+
+  //       if (existingEntry) {
+  //         setIsWhitelisted(existingEntry);
+  //       } else {
+  //         setIsWhitelisted(null);
+  //       }
+  //     });
+
+  //     switch (request.action) {
+  //       case 'getWalletAddress':
+  //         setActionText('Get the address of the current wallet');
+  //         break;
+  //       case 'getNativeBalance':
+  //         setActionText('Get the native balance of the current wallet');
+  //         break;
+  //       case 'sign':
+  //         setActionText('Sign the transaction');
+  //         break;
+  //       case 'signAndSend':
+  //         setActionText('Sign and send the transaction');
+  //         break;
+  //       default:
+  //         sendResponse(true);
+  //         break;
+  //     }
+  //     sendResponse(true);
+  //   } else {
+  //     sendResponse(false);
+  //     setIsOpenDialog(false);
+  //     setActionText('');
+  //   }
+  // });
 
   const handleConfirm = () => {
     if (checkedItems) {

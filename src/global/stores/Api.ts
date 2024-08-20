@@ -9,11 +9,12 @@ export class Api {
 
   isReady = false;
 
-  listen = (): (() => void) => {
-    const listener = (message: any, sender: chrome.runtime.MessageSender, sendResponse: any) => {
-      // console.log('message=', message);
-      // console.log('sender=', sender);
-      // console.log('response=', sendResponse);
+  listen = (
+    callback: (request: any, sender: chrome.runtime.MessageSender) => void
+  ): (() => void) => {
+    const listener = (request: any, sender: chrome.runtime.MessageSender, sendResponse: any) => {
+      if (typeof callback !== 'function') return false;
+      callback(request, sender);
       sendResponse(true);
     };
     chrome.runtime.onMessage.addListener(listener);
