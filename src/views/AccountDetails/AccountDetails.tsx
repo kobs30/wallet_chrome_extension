@@ -25,7 +25,7 @@ export const AccountDetails: FC = observer(function AccountDetails_() {
   const handleCopyClick = () => {
     if (!window.isSecureContext) return;
     navigator.clipboard.writeText(account.pk).catch((e) => {
-      console.error('Error during copying error message', e);
+      console.log('Error during copying error message', e);
     });
   };
 

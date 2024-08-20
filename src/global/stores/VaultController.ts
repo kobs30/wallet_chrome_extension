@@ -49,7 +49,7 @@ export class VaultController {
       // return JSON.parse(this.storage.getItem(ACCS_STORAGE_KEY) ?? '[]');
       return JSON.parse(this.#getItem(ACCS_STORAGE_KEY) ?? '[]');
     } catch (e) {
-      console.error(e);
+      console.log(e);
       return [];
     }
   };
@@ -80,6 +80,7 @@ export class VaultController {
       const item = this.storage.getItem(ACCS_STORAGE_KEY);
       if (!item) return false;
       const d = CryptoJS.AES.decrypt(item, password).toString(CryptoJS.enc.Utf8);
+      if (!d) return false;
       JSON.parse(d);
       return true;
     } catch (e) {

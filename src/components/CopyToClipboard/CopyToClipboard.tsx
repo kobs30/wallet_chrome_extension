@@ -31,7 +31,7 @@ export const CopyToClipboard: FC<CopyToClipboardProps> = (props) => {
   const handleClick = () => {
     if (!window.isSecureContext) return;
     navigator.clipboard.writeText(value).catch((e) => {
-      console.error('Error during copying error message', e);
+      console.log('Error during copying error message', e);
     });
   };
 

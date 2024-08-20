@@ -23,7 +23,7 @@ export const Pages = observer(() => {
         disposer();
       };
     } catch (e) {
-      console.error(e);
+      console.log(e);
     }
   }, []);
 

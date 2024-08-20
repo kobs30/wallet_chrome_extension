@@ -119,7 +119,8 @@ export const Send: FC<SendProps> = observer(function Send_(props) {
         },
         feeAbortController.signal
       )
-      .then(updateFee);
+      .then(updateFee)
+      .catch((e) => console.log(e));
 
     return () => {
       feeAbortController.abort();

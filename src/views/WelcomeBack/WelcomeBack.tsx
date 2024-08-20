@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
@@ -30,6 +30,10 @@ export const WelcomeBack: FC<WelcomeBackProps> = observer(function WelcomeBack_(
       password: '',
     },
   });
+
+  useEffect(() => {
+    form.setFocus('password');
+  }, []);
 
   const passwordController = (
     <Controller
