@@ -25,7 +25,13 @@ export const AccountInfo: FC<AccountInfoProps> = observer(function AccountInfo_(
   const isAccountsPathname = location.pathname === '/accounts';
 
   const account = rootStore.wallet.activeAccount;
-  if (!account) return null;
+
+  if (!account) {
+    const activeAccount = rootStore
+      ? rootStore.wallet.findAccountByAddress(rootStore.wallet.activeAddress)
+      : null;
+    if (!activeAccount) return null;
+  }
   const truncatedName = truncateTextInMiddle(account.name, 18);
 
   return (
